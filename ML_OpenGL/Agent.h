@@ -1,13 +1,14 @@
 #pragma once
 
-#include "Brain.h"
-#include "Vector2.h"
-
+class Brain;
 
 class Agent
 {
 public:
 	Agent( const Vector2& start_pos, const Vector2& start_fwd );
+
+	Agent() = default;
+	~Agent() = default;
 
 	void Init();
 	void Update();
@@ -24,6 +25,7 @@ public:
 	bool NextPositionIsOut() const;
 
 private:
+
 	std::unique_ptr< Brain > brain = nullptr;
 
 	Vector2 pos = {};

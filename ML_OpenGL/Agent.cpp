@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "Agent.h"
 
+#include "Brain.h"
+
 #define GLOBE 1
 #define SPHERIC 2
 #define BLUE_INDEX 16

@@ -1,21 +1,23 @@
 #pragma once
-#include <vector>
 
 class Agent;
 
 class PopulationManager
 {
-	int populationSize = 150;
-	std::vector< Agent* > population;
+public:
+	PopulationManager() = default;
+	~PopulationManager() = default;
+
+	void Start();
+	std::unique_ptr< Agent > Breed( const std::unique_ptr< Agent >& parent1, const std::unique_ptr< Agent >& parent2 ) const;
+	void BreedNewPopulation();
+	void Update();
+	void Draw() const;
+
+private:
+	std::vector< std::unique_ptr< Agent > > population;
 	static float elapsed;
 	float trialTime = 2.5f;
 	int generation = 1;
-
-public:
-
-	void Start();
-	Agent* Breed( Agent* parent1, Agent* parent2 );
-	void BreedNewPopulation();
-	void Update();
-	void Draw();
+	int populationSize = 150;
 };

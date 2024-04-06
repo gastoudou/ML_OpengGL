@@ -5,9 +5,9 @@
 #include "Brain.h"
 #include "DNA.h"
 
-float PopulationManager::elapsed = 0.0f;
-
 const int rangePosition = static_cast< int >( worldLimits.x / 2 );
+
+float PopulationManager::elapsed = 0.0f;
 
 void PopulationManager::Start()
 {
@@ -17,20 +17,20 @@ void PopulationManager::Start()
 		Vector2 start_fwd( ( float )RandomRange( -rangePosition, rangePosition ), ( float )RandomRange( -rangePosition, rangePosition ) );
 		start_fwd.normalize();
 
-		Agent* newBot = new Agent( start_pos, start_fwd );
+		std::unique_ptr< Agent > newBot = std::make_unique< Agent >( start_pos, start_fwd );
 		newBot->Init();
 		newBot->GetBrain().Init();
 		population.push_back( newBot );
 	}
 }
 
-Agent* PopulationManager::Breed( Agent* parent1, Agent* parent2 )
+std::unique_ptr< Agent > PopulationManager::Breed( const std::unique_ptr< Agent >& parent1, const std::unique_ptr< Agent >& parent2 ) const
 {
 	Vector2 start_pos( ( float )RandomRange( -rangePosition, rangePosition ), ( float )RandomRange( -rangePosition, rangePosition ) );
 	Vector2 start_fwd( ( float )RandomRange( -rangePosition, rangePosition ), ( float )RandomRange( -rangePosition, rangePosition ) );
 	start_fwd.normalize();
 
-	Agent* newBot = new Agent( start_pos, start_fwd );
+	std::unique_ptr< Agent > newBot = std::make_unique< Agent >( start_pos, start_fwd );
 	newBot->Init();
 
 	Brain& newBotBrain = newBot->GetBrain();
@@ -50,22 +50,19 @@ Agent* PopulationManager::Breed( Agent* parent1, Agent* parent2 )
 
 void PopulationManager::BreedNewPopulation()
 {
-	std::vector< Agent* > sorted_population = population;
-	std::sort( sorted_population.begin(), sorted_population.end(), [] ( Agent* i, Agent* j )
+	const auto sorted_population = population;
+
+	std::sort( sorted_population.begin(), sorted_population.end(), [] ( auto i, auto j )
 		{
 			return ( i->GetBrain().timeWalking ) < ( j->GetBrain().timeWalking );
 		} );
+
 	population.clear();
 
 	for ( size_t i = sorted_population.size() - 1u; i > ( sorted_population.size() / 2u ) - 1; --i )
 	{
 		population.push_back( Breed( sorted_population[ i ], sorted_population[ i - 1 ] ) );
 		population.push_back( Breed( sorted_population[ i - 1 ], sorted_population[ i ] ) );
-	}
-
-	for ( int i = 0; i < sorted_population.size(); i++ )
-	{
-		delete ( sorted_population[ i ] );
 	}
 
 	generation++;
@@ -81,18 +78,18 @@ void PopulationManager::Update()
 	if ( elapsed > trialTime )
 	{
 		BreedNewPopulation();
-		elapsed = 0;
+		elapsed = 0.0f;
 	}
 	else
 	{
-		for ( auto* agent : population )
+		for ( auto& agent : population )
 		{
 			agent->Update();
 		}
 	}
 }
 
-void PopulationManager::Draw()
+void PopulationManager::Draw() const
 {
 	glColor3f( 0.0f, 1.0f, 0.5f );
 
@@ -108,7 +105,7 @@ void PopulationManager::Draw()
 
 	glPopMatrix();
 
-	for ( auto* agent : population )
+	for ( const auto& agent : population )
 	{
 		agent->Draw();
 	}

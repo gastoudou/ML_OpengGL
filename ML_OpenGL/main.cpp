@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "PopulationManager.h"
+#include "Agent.h"
+#include "Brain.h"
 
 PopulationManager pop;
 
@@ -25,7 +27,7 @@ GLvoid initializeGL( GLsizei, GLsizei );
 GLvoid updateScene( GLvoid );
 GLvoid drawScene( GLvoid );
 
-int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow )
+int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPSTR /*lpCmdLine*/, int nCmdShow)
 {
 	MSG        msg;
 	WNDCLASS   wndclass = {};
